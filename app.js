@@ -3,7 +3,12 @@ var path = require('path');
 var favicon = require('static-favicon');
 var logger = require('morgan');
 var cookieParser = require('cookie-parser');
+var session = require('cookie-session');
 var bodyParser = require('body-parser');
+
+var mongo = require('mongodb');
+var monk = require('monk');
+var db = monk('localhost:27017/calbox');
 
 var routes = require('./routes/index');
 var users = require('./routes/users');
@@ -19,8 +24,16 @@ app.use(logger('dev'));
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded());
 app.use(cookieParser());
+app.use(session({
+    keys: ['key1', 'key2']
+}));
 app.use(require('stylus').middleware(path.join(__dirname, 'public')));
 app.use(express.static(path.join(__dirname, 'public')));
+
+app.use(function(req,res,next){
+    req.db = db;
+    next();
+});
 
 app.use('/', routes);
 app.use('/users', users);
