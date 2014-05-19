@@ -39,6 +39,10 @@ router.get('/profile', isLoggedIn, function(req, res) {
 
 	// Log into gmail
 	gmail.login(req.session.client, function(err, gmail) {
+		if (err) {
+			console.log(err);
+			return;
+		}
 
 		// Get the user's gmail labels
 		gmail.getLabels(function(err, labels) {
@@ -67,7 +71,11 @@ router.get('/profile', isLoggedIn, function(req, res) {
 	});
 
 	// Get the user's calendars
-	calendar.getCalendars(req.session.client, function(err, calendars) {
+	calendar.setCredentials({
+		access_token: req.session.user.access_token,
+		refresh_token: req.session.user.refresh_token
+	});
+	calendar.getCalendars(function(err, calendars) {
 		if (err) {
 			console.log(err);
 			return;
