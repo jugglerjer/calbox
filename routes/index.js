@@ -10,12 +10,18 @@ var async = require('async');
 
 /* GET home page. */
 router.get('/', function(req, res) {
-  	
+  	res.render('index', { user: req.session.user });
 });
 
 /* GET Google Authentication Request Page */
 router.get('/login', function(req, res) {
 	auth.login(req, res);
+});
+
+/* GET Sign the user out */
+router.get('/logout', function(req, res) {
+	delete req.session.user;
+	res.redirect('/');
 });
 
 /* GET start page once the user has authenticated */
